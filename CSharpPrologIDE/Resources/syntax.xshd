@@ -1,0 +1,61 @@
+<SyntaxDefinition
+    name="phrasi"
+    xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    
+    <Color foreground="#aaaaaa" name="Comment" />
+    <Color foreground="#ff66c6" name="vardeclare" />
+    <Color foreground="#7fb0ff" name="subtemplate" />
+    <Color foreground="#9999ee" name="wordform" />
+    <Color foreground="#12687c" name="wordformBrackets" />
+    <Color foreground="#cc4444" fontWeight="bold" name="keyword1" />
+    <Color foreground="#44cc44" name="keyword3" />
+
+    <!-- This is the main ruleset. -->
+    <RuleSet>
+        <Span color="Comment" begin="#" />
+
+        <!-- [wordform call] -->
+        <Span>
+            <Begin>\(</Begin>
+            <End>\)</End>
+            <RuleSet>
+                <Rule color="vardeclare">\$\w+</Rule>
+                <Rule color="wordform">.+</Rule>
+            </RuleSet>
+        </Span>
+
+        <!-- [subtemplate call] -->
+        <Span>
+            <Begin>\[</Begin>
+            <End>\]</End>
+            <RuleSet>
+                <Rule color="vardeclare">\$\w+</Rule>
+                <Rule color="subtemplate">.+</Rule>
+            </RuleSet>
+        </Span>
+
+        <!-- $var = ... -->
+        <Rule color="vardeclare">\$\w+</Rule>
+
+        <Keywords color="keyword1">
+            <Word>MAIN</Word>
+            <Word>?</Word>
+        </Keywords>
+
+        <Span>
+          <Begin>^([ ]{4}|\t)([ ]{4}|\t)</Begin>
+          <RuleSet>
+            <Span color="Comment" begin="#" />
+            <Rule color="keyword3">.+</Rule>
+          </RuleSet>
+        </Span>
+
+        <!-- <Span color="String">
+            <Begin>[</Begin>
+            <End>]</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span> -->
+    </RuleSet>
+</SyntaxDefinition>
