@@ -5,13 +5,19 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpPrologIDE", "CSharpPrologIDE\CSharpPrologIDE.csproj", "{913293BA-F902-4908-B760-15BFD5817E5A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_common", "_common", "{C0503D18-64A0-4DA2-96D3-87F87FD53C4F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{C0503D18-64A0-4DA2-96D3-87F87FD53C4F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miktemk", "..\MiktemkCommons\Miktemk\Miktemk.csproj", "{DB69C87C-B374-4CD7-B0CF-FAA5541B2DF6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miktemk.Wpf", "..\MiktemkCommons\Miktemk.Wpf\Miktemk.Wpf.csproj", "{DA6804E9-85DE-43C1-854E-6ABB3C85D970}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miktemk.Wpf.AvalonEdit", "..\MiktemkCommons\Miktemk.Wpf.AvalonEdit\Miktemk.Wpf.AvalonEdit.csproj", "{92E324F2-C3AA-4B6F-86A3-668DC6866843}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_doc", "_doc", "{923270E5-8FDE-49CC-A8BF-460258114931}"
+	ProjectSection(SolutionItems) = preProject
+		REAMDE.md = REAMDE.md
+		TODO.md = TODO.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,8 +6,11 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System.Windows.Input;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using Miktemk.Logging;
+using Prolog;
+using Miktemk;
 
 namespace CSharpPrologIDE.ViewModel
 {
@@ -46,21 +49,15 @@ namespace CSharpPrologIDE.ViewModel
 
         private void TriggerBuild()
         {
-            Debug.WriteLine($"TODO: build");
-
-            // TODO: test
-            MyConsole.WriteLine("shit");
-            MyConsole.WriteLine("s1hit");
-            MyConsole.WriteLine("sh2it");
-            MyConsole.WriteLine("shi3t");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
-            MyConsole.WriteLine("shit4");
+            MyConsole.WriteLine("----------------------");
+            var prolog = new PrologEngine(persistentCommandHistory: false);
+            prolog.ConsultFromString(CodeDocument.Text);
+            prolog.GetFirstSolution("flight_param(X,Y,Z).");
+            foreach (var sol in prolog.GetEnumerator())
+            {
+                var stringified = sol.VarValuesIterator.Select(val => $"{val.Name}:{val.Value}").StringJoin(", ");
+                MyConsole.WriteLine(stringified);
+            }
         }
 
         private void CaretPositionChanged(Caret caret)
