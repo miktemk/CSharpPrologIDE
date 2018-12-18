@@ -7,7 +7,8 @@
         xmlns:miktemkBehaviors="clr-namespace:Miktemk.Wpf.Core.Behaviors;assembly=Miktemk.Wpf"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:intr="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:myBehaviors="clr-namespace:CSharpPrologIDE.Behaviors"
+        xmlns:myBehaviors="clr-namespace:Miktemk.Wpf.Core.Behaviors;assembly=Miktemk.Wpf"
+        xmlns:myBehaviorsAE="clr-namespace:Miktemk.Wpf.AvalonEdit.Behaviors;assembly=Miktemk.Wpf.AvalonEdit"
         mc:Ignorable="d ignore"
         Height="800"
         Width="1200"
@@ -40,21 +41,34 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <avalonEdit:TextEditor
-            Padding="10"
-            FontFamily="Consolas"
-            FontSize="12pt"
-            ShowLineNumbers="True"
-            SyntaxHighlighting="{Binding SyntaxHighlighting}"
-            Document="{Binding CodeDocument}"
-            IsEnabled="True"
-            WordWrap="False"
-            myBehaviors:AEBehaviors.CaretPositionChanged="{Binding CaretPositionChangedCommand}"
-            >
-        </avalonEdit:TextEditor>
+        <DockPanel>
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock
+                        Text="{Binding CurErrorMessage}"
+                        Foreground="DarkRed"
+                    />
+                </StatusBarItem>
+            </StatusBar>
+            <avalonEdit:TextEditor
+                Padding="10"
+                FontFamily="Consolas"
+                FontSize="12pt"
+                ShowLineNumbers="True"
+                SyntaxHighlighting="{Binding SyntaxHighlighting}"
+                Document="{Binding CodeDocument}"
+                IsEnabled="True"
+                WordWrap="False"
+                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CaretPositionChangedCommand}"
+                myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlight}"
+                >
+            </avalonEdit:TextEditor>
+        </DockPanel>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <TextBox
             Grid.Column="2"
+            FontFamily="Consolas"
+            FontSize="10pt"
             miktemkBehaviors:TextBoxBehaviors.MakeThisTextboxPrintConsoleOutput="True"
             Text="{Binding ConsoleText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             TextWrapping="Wrap"

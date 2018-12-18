@@ -1,16 +1,19 @@
 ﻿using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Miktemk.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using Miktemk;
 
 namespace CSharpPrologIDE.Code
 {
-    public class AlexaIdeUtils
+    public class MyPrologUtils
     {
         public static IHighlightingDefinition LoadSyntaxHighlightingFromResource(string resourceName)
         {
@@ -20,6 +23,23 @@ namespace CSharpPrologIDE.Code
             {
                 return HighlightingLoader.Load(xshd_reader, HighlightingManager.Instance);
             }
+        }
+
+        public static PrologSyntaxError TryToGetErrorFromException(Exception ex)
+        {
+            // LINK: https://regex101.com/r/mpM520/2
+            var match1 = Regex.Match(ex.Message, @"\*\*\* error in line (\d+) at position (\d+): (.*)");
+            if (match1.Success)
+                return new PrologSyntaxError
+                {
+                    Line = match1.Groups[1].Value.ParseIntOrNull(),
+                    Pos = match1.Groups[2].Value.ParseIntOrNull(),
+                    Message = match1.Groups[3].Value,
+                };
+            return new PrologSyntaxError
+            {
+                Message = ex.Message,
+            };
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Miktemk.Logging;
 using Prolog;
 using Miktemk;
+using Miktemk.Models;
 
 namespace CSharpPrologIDE.ViewModel
 {
@@ -21,6 +22,8 @@ namespace CSharpPrologIDE.ViewModel
         // avalon-edit
         public TextDocument CodeDocument { get; } = new TextDocument();
         public IHighlightingDefinition SyntaxHighlighting { get; set; }
+        public string CurErrorMessage { get; set; }
+        public WordHighlight CurErrorWordHighlight { get; set; }
 
         // commands
         public ICommand WindowLoadedCommand { get; }
@@ -31,7 +34,7 @@ namespace CSharpPrologIDE.ViewModel
         public MainViewModel()
         {
             // set up view
-            SyntaxHighlighting = AlexaIdeUtils.LoadSyntaxHighlightingFromResource(Constants.Resources.SyntaxXshd);
+            SyntaxHighlighting = MyPrologUtils.LoadSyntaxHighlightingFromResource(Constants.Resources.SyntaxXshd);
             CodeDocument.Text = @"";
 
             // assign commands
@@ -49,23 +52,38 @@ namespace CSharpPrologIDE.ViewModel
 
         private void TriggerBuild()
         {
-            MyConsole.WriteLine("----------------------");
-            var prolog = new PrologEngine(persistentCommandHistory: false);
-            prolog.ConsultFromString(CodeDocument.Text);
-            prolog.GetFirstSolution("flight_param(X,Y,Z).");
-            foreach (var sol in prolog.GetEnumerator())
+            try
             {
-                var stringified = sol.VarValuesIterator.Select(val => $"{val.Name}:{val.Value}").StringJoin(", ");
-                MyConsole.WriteLine(stringified);
+                var prolog = new PrologEngine(persistentCommandHistory: false);
+                prolog.ConsultFromString(CodeDocument.Text);
+                prolog.GetFirstSolution("flight_param(X,Y,Z).");
+                MyConsole.WriteLine("----------------------");
+                foreach (var sol in prolog.GetEnumerator())
+                {
+                    var stringified = sol.VarValuesIterator.Select(val => $"{val.Name}:{val.Value}").StringJoin(", ");
+                    MyConsole.WriteLine(stringified);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorInfo = MyPrologUtils.TryToGetErrorFromException(ex);
+                if (errorInfo.Line != null)
+                {
+                    var errorLine = CodeDocument.GetLineByNumber(errorInfo.Line.Value);
+                    CurErrorWordHighlight = new WordHighlight(errorLine.Offset, errorLine.Length);
+                }
+                CurErrorMessage = errorInfo.Message;
             }
         }
 
         private void CaretPositionChanged(Caret caret)
         {
-            var curCaretOffset = caret.Offset;
-            var curCaretLine = CodeDocument.GetLineByNumber(caret.Line);
-            var curLineText = CodeDocument.GetText(curCaretLine);
+            CurErrorMessage = null;
+            CurErrorWordHighlight = null;
 
+            //var curCaretOffset = caret.Offset;
+            //var curCaretLine = CodeDocument.GetLineByNumber(caret.Line);
+            //var curLineText = CodeDocument.GetText(curCaretLine);
             // NOTE: this is a test output
             //CodeDocumentOutput.Text = $@"
             //curCaretLine: [{curCaretLine.Offset}..{curCaretLine.EndOffset}]
