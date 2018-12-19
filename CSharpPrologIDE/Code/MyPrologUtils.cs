@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using Miktemk;
+using Prolog;
 
 namespace CSharpPrologIDE.Code
 {
@@ -40,6 +41,20 @@ namespace CSharpPrologIDE.Code
             {
                 Message = ex.Message,
             };
+        }
+
+        public static PrologSyntaxError TryToGetErrorFromPrologSolution(PrologEngine.ISolution sol)
+        {
+            var solStr = sol.ToString(); // NOTE: msg property is not publicly accessible, by ToString() gives it away (for now)
+
+            // LINK: https://regex101.com/r/9acgAX/2
+            var match1 = Regex.Match(solStr, @"\*\*\* (Unexpected symbol.*|error.*)");
+            if (match1.Success)
+                return new PrologSyntaxError
+                {
+                    Message = match1.Groups[1].Value,
+                };
+            return null;
         }
     }
 }

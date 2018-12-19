@@ -13,6 +13,7 @@
         Height="800"
         Width="1200"
         Title="CSharp Prolog Editor"
+        Icon="Resources/Images/prolog-icon.png"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     
     <!--<Window.Resources>
@@ -59,38 +60,55 @@
                 Document="{Binding CodeDocument}"
                 IsEnabled="True"
                 WordWrap="False"
+                myBehaviorsAE:AEBehaviors.EnableBuiltInSearchPanel="True"
                 myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CaretPositionChangedCommand}"
                 myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlight}"
                 >
             </avalonEdit:TextEditor>
         </DockPanel>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-        <TextBox
-            Grid.Column="2"
-            FontFamily="Consolas"
-            FontSize="10pt"
-            miktemkBehaviors:TextBoxBehaviors.MakeThisTextboxPrintConsoleOutput="True"
-            Text="{Binding ConsoleText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            TextWrapping="Wrap"
-            AcceptsReturn="True"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Auto">
-            <TextBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Copy all" Command="{Binding CmdConsole_CopyAll}" >
-                        <MenuItem.Icon>
-                            <Image Source="Resources/Images/copy-128.png" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="Clear all" Command="{Binding CmdConsole_ClearAll}" >
-                        <MenuItem.Icon>
-                            <Image Source="Resources/Images/clear-all-128.png" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <!--<Separator />-->
-                </ContextMenu>
-            </TextBox.ContextMenu>
-        </TextBox>
+        <DockPanel Grid.Column="2">
+            <avalonEdit:TextEditor
+                DockPanel.Dock="Bottom"
+                Padding="10"
+                FontFamily="Consolas"
+                FontSize="12pt"
+                ShowLineNumbers="True"
+                SyntaxHighlighting="{Binding SyntaxHighlighting}"
+                Document="{Binding CodeDocumentQuery}"
+                IsEnabled="True"
+                WordWrap="False"
+                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CaretPositionChangedCommand}"
+                myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlightQuery}"
+                Height="200"
+                >
+            </avalonEdit:TextEditor>
+            <TextBox
+                FontFamily="Consolas"
+                FontSize="10pt"
+                miktemkBehaviors:TextBoxBehaviors.MakeThisTextboxPrintConsoleOutput="True"
+                Text="{Binding ConsoleText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap"
+                AcceptsReturn="True"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <TextBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy all" Command="{Binding CmdConsole_CopyAll}" >
+                            <MenuItem.Icon>
+                                <Image Source="Resources/Images/copy-128.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Clear all" Command="{Binding CmdConsole_ClearAll}" >
+                            <MenuItem.Icon>
+                                <Image Source="Resources/Images/clear-all-128.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <!--<Separator />-->
+                    </ContextMenu>
+                </TextBox.ContextMenu>
+            </TextBox>
+        </DockPanel>
         
         <!--<DockPanel>
             <mikTtsControls:TtsNavigationControls DockPanel.Dock="Bottom" DataContext="{Binding Main, Source={StaticResource Locator}}" />

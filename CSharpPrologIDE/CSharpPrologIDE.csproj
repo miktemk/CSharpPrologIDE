@@ -39,6 +39,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>prolog-icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CSProlog, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CSProlog.6.0.0\lib\net35\CSProlog.dll</HintPath>
@@ -160,6 +163,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\copy-128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\prolog-icon.ico" />
+    <Resource Include="Resources\Images\prolog-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="prolog-icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
