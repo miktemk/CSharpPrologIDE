@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using CSharpPrologIDE.Services;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 
@@ -10,30 +11,17 @@ namespace CSharpPrologIDE.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            //SimpleIoc.Default.Register<IDataService, DataService>();
-
-            SimpleIoc.Default.Register<MainViewModel>();
-        }
-
-        /// <summary>
-        /// Gets the Main property.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-            "CA1822:MarkMembersAsStatic",
-            Justification = "This non-static member is needed for data binding purposes.")]
-        public MainViewModel Main
-        {
-            get
+            // see: http://stackoverflow.com/questions/17594058/mvvm-light-there-is-already-a-factory-registered-for-inavigationservice
+            if (!ViewModelBase.IsInDesignModeStatic)
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                SimpleIoc.Default.Register<MyAppStateService, MyAppStateService>();
+
+                SimpleIoc.Default.Register<MainViewModel>();
             }
         }
 
-        /// <summary>
-        /// Cleans up all the resources.
-        /// </summary>
-        public static void Cleanup()
-        {
-        }
+        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+
+        public static void Cleanup() { }
     }
 }

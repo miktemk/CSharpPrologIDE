@@ -1,0 +1,61 @@
+<SyntaxDefinition name="C#"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="#C3C3C3" />
+  <Color name="String" foreground="#0AD200" />
+  <Color name="Number" foreground="#2001A4" />
+  <Color name="Literal" foreground="#0399CC" />
+  <Color name="QuestionMark" foreground="#03E2E7" />
+  <Color name="Variable" foreground="#DE1A00" />
+  <Color name="Sign" foreground="#000000" fontWeight="bold" />
+  <Color name="Sign2" foreground="#FFAD03" fontWeight="bold" />
+  <Color name="Fact" foreground="#0000FF" />
+  <Color name="Subfact" foreground="#A0A0FF" />
+  <Color name="FactCall" foreground="#FD5AE7" />
+
+  <!-- This is the main ruleset. -->
+  <RuleSet>
+    <Span color="Comment" begin="//" />
+    <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+
+    <Rule color="Fact">^[a-zA-Z0-9_]*[a-zA-Z0-9]\b</Rule>
+    <Rule color="Subfact">^[a-zA-Z0-9_]+_\b</Rule>
+    <Rule color="FactCall">^\s+[a-zA-Z0-9_]+\b</Rule>
+    <Rule color="Sign">\.$</Rule>
+    
+    <Keywords color="Sign2">
+      <Word>:-</Word>
+      <Word>-></Word>
+      <Word>?</Word>
+    </Keywords>
+
+    <Span multiline="true">
+      <Begin>\(</Begin>
+      <End>\)</End>
+      <RuleSet>
+        <Span color="String">
+          <Begin>"</Begin>
+          <End>"</End>
+          <RuleSet>
+            <!-- nested span for escape sequences -->
+            <Span begin="\\" end="."/>
+          </RuleSet>
+        </Span>
+        
+        <Rule color="Number">
+          \b0[xX][0-9]+  # hex number
+          |    \b
+          (    \d+(\.[0-9]+)?   #number with optional floating point
+          |    \.[0-9]+         #or just starting with floating point
+          )
+          ([eE][+-]?[0-9]+)?  # optional exponent
+        </Rule>
+        
+        <Rule color="Literal">[a-z][a-zA-Z0-9_]*</Rule>
+        <Rule color="Variable">[A-Z][a-zA-Z0-9_]*</Rule>
+        <Rule color="QuestionMark">\?</Rule>
+
+      </RuleSet>
+    </Span>
+
+  </RuleSet>
+</SyntaxDefinition>

@@ -12,7 +12,7 @@
         mc:Ignorable="d ignore"
         Height="800"
         Width="1200"
-        Title="CSharp Prolog Editor"
+        Title="{Binding WindowTitle}"
         Icon="Resources/Images/prolog-icon.png"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     
@@ -25,15 +25,19 @@
 
     <intr:Interaction.Triggers>
         <intr:EventTrigger EventName="Loaded">
-            <intr:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
+            <intr:InvokeCommandAction Command="{Binding CmdWindow_Loaded}"/>
         </intr:EventTrigger>
         <intr:EventTrigger EventName="Closing">
-            <intr:InvokeCommandAction Command="{Binding WindowClosingCommand}"/>
+            <intr:InvokeCommandAction Command="{Binding CmdWindow_Closing}"/>
         </intr:EventTrigger>
     </intr:Interaction.Triggers>
 
     <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+Space" Command="{Binding TriggerBuildCommand}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+Space" Command="{Binding CmdUser_TriggerBuild}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding CmdUser_Open}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding CmdUser_RevealInExplorer}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding CmdUser_Save}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding CmdUser_SaveAs}"></KeyBinding>
     </Window.InputBindings>
 
     <Grid>
@@ -61,8 +65,10 @@
                 IsEnabled="True"
                 WordWrap="False"
                 myBehaviorsAE:AEBehaviors.EnableBuiltInSearchPanel="True"
-                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CaretPositionChangedCommand}"
+                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CmdAvalon_CaretPositionChanged}"
                 myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlight}"
+                myBehaviors:GeneralBehaviors.OnDragDrop="{Binding CmdUser_OnDragDropProlog}"
+                myBehaviors:GeneralBehaviors.OnDragDropConfig="{Binding DragDropConfigProlog}"
                 >
             </avalonEdit:TextEditor>
         </DockPanel>
