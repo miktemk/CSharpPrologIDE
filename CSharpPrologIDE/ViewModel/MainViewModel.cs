@@ -181,7 +181,7 @@ namespace CSharpPrologIDE.ViewModel
                 return;
             }
             File.WriteAllText(CurFilename, CodeDocument.Text);
-            CodeDocument.UndoStack.ClearAll();
+            CodeDocument.UndoStack.MarkAsOriginalFile();
         }
 
         private void _CmdUser_SaveAs()
