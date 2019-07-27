@@ -76,10 +76,15 @@ namespace CSharpPrologIDE.ViewModel
 
             // .... restore from previous state
             var appState = appStateService.LoadOrCreateNew();
-            if (appState.LastFilename != null)
-                LoadFile(appState.LastFilename);
             if (appState.LastQueryText != null)
                 CodeDocumentQuery.Text = appState.LastQueryText;
+
+            // .... load file in question
+            var argFilename = (string)Application.Current.Resources[Constants.Resources.Arg1Key];
+            if (argFilename != null && File.Exists(argFilename))
+                LoadFile(argFilename);
+            else if (appState.LastFilename != null && File.Exists(appState.LastFilename))
+                LoadFile(appState.LastFilename);
 
             CodeDocument.UndoStack.ClearAll();
             CodeDocumentQuery.UndoStack.ClearAll();

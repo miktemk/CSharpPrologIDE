@@ -14,6 +14,7 @@ namespace CSharpPrologIDE.Code
             // TODO: find a t4 template to generate this from contents of "Resource" folder
             public const string AvalonSyntaxTemp = "CSharpPrologIDE.Resources.syntax-temp.xshd";
             public const string AvalonSyntaxProlog2 = "CSharpPrologIDE.Resources.syntax-prolog2.xshd";
+            public const string Arg1Key = "CSharpPrologIDE.CmdLineArg1";
         }
 
         public static class Samples
