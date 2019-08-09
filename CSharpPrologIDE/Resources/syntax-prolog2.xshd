@@ -1,5 +1,4 @@
-<SyntaxDefinition name="C#"
-        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<SyntaxDefinition name="C#" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <Color name="Comment" foreground="#C3C3C3" />
   <Color name="String" foreground="#0AD200" />
   <Color name="Number" foreground="#2001A4" />
@@ -14,29 +13,57 @@
 
   <!-- This is the main ruleset. -->
   <RuleSet>
-    <Span color="Comment" begin="//" />
+    <Span color="Comment" begin="%" />
     <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
 
     <Rule color="Fact">^[a-zA-Z0-9_]*[a-zA-Z0-9]\b</Rule>
     <Rule color="Subfact">^[a-zA-Z0-9_]+_\b</Rule>
-    <Rule color="FactCall">^\s+[a-zA-Z0-9_]+\b</Rule>
+    <Rule color="FactCall">^\s+[a-z][a-zA-Z0-9_]+\b</Rule>
+    <Rule color="Variable">\b[A-Z][\w\d_]+\b</Rule>
     <Rule color="Sign">\.$</Rule>
     
     <Keywords color="Sign2">
       <Word>:-</Word>
       <Word>-></Word>
       <Word>?</Word>
+      <Word>_</Word>
     </Keywords>
 
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
     <Span multiline="true">
       <Begin>\(</Begin>
       <End>\)</End>
       <RuleSet>
+        <Span multiline="true">
+          <Begin >\b[a-zA-Z0-9_]+\(</Begin>
+          <End>\)</End>
+          <RuleSet>
+            <Span color="Comment" begin="%" />
+            <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+            <Span color="String">
+              <Begin>"</Begin>
+              <End>"</End>
+              <RuleSet>
+                <Span begin="\\" end="."/>
+              </RuleSet>
+            </Span>
+            <Rule color="FactCall">\b[a-z][\w\d_]+\b</Rule>
+            <Rule color="Variable">\b[A-Z][\w\d_]+\b</Rule>
+            <Rule color="Sign">\.$</Rule>
+          </RuleSet>
+        </Span>
+        <Span color="Comment" begin="%" />
+        <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
         <Span color="String">
           <Begin>"</Begin>
           <End>"</End>
           <RuleSet>
-            <!-- nested span for escape sequences -->
             <Span begin="\\" end="."/>
           </RuleSet>
         </Span>
@@ -50,8 +77,8 @@
           ([eE][+-]?[0-9]+)?  # optional exponent
         </Rule>
         
-        <Rule color="Literal">[a-z][a-zA-Z0-9_]*</Rule>
-        <Rule color="Variable">[A-Z][a-zA-Z0-9_]*</Rule>
+        <Rule color="Literal">\b[a-z][a-zA-Z0-9_]*</Rule>
+        <Rule color="Variable">\b[A-Z][a-zA-Z0-9_]*</Rule>
         <Rule color="QuestionMark">\?</Rule>
 
       </RuleSet>

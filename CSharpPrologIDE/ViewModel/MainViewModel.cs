@@ -16,12 +16,15 @@ using System.Windows;
 using CSharpPrologIDE.Services;
 using Miktemk.Wpf.Core.Behaviors.VM;
 using System.IO;
+using Miktemk.Wpf.Services;
+using System.ComponentModel;
 
 namespace CSharpPrologIDE.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         private readonly MyAppStateService appStateService;
+        private readonly FileDialogsServiceWin32 fileDialogsService;
 
         // ui config
         public UIElementDragDropConfig DragDropConfigProlog { get; } = Constants.Config.DragDropConfigProlog;
@@ -36,7 +39,9 @@ namespace CSharpPrologIDE.ViewModel
         public WordHighlight CurErrorWordHighlightQuery { get; set; }
         public string ConsoleText { get; set; }
         public string CurFilename { get; set; }
-        public string WindowTitle => $"CSharp Prolog Editor{CurFilename.PrefixIfNotEmpty(" - ")}{(CodeDocument.UndoStack.IsOriginalFile ? " *" : "")}";
+        public bool IsCurDocumentChanged { get; private set; } = false;
+        public string WindowTitle => $"CSharp Prolog Editor{CurFilename.PrefixIfNotEmpty(" - ")}{(IsCurDocumentChanged ? " *" : "")}";
+        public string CurFilenameDir => (CurFilename != null) ? Path.GetDirectoryName(CurFilename) : null;
 
         // commands
         public ICommand CmdWindow_Loaded { get; }
@@ -52,9 +57,12 @@ namespace CSharpPrologIDE.ViewModel
         public ICommand CmdUser_SaveAs { get; }
 
         public MainViewModel(
-            MyAppStateService appStateService)
+            FileDialogsServiceWin32 fileDialogsService,
+            MyAppStateService appStateService
+            )
         {
             this.appStateService = appStateService;
+            this.fileDialogsService = fileDialogsService;
 
             // .... set up view
             SyntaxHighlighting = MyPrologUtils.LoadSyntaxHighlightingFromResource(Constants.Resources.AvalonSyntaxProlog2);
@@ -74,6 +82,8 @@ namespace CSharpPrologIDE.ViewModel
             CmdUser_Save = new RelayCommand(_CmdUser_Save);
             CmdUser_SaveAs = new RelayCommand(_CmdUser_SaveAs);
 
+            CodeDocument.UndoStack.PropertyChanged += CodeDocument_UndoStack_PropertyChanged;
+
             // .... restore from previous state
             var appState = appStateService.LoadOrCreateNew();
             if (appState.LastQueryText != null)
@@ -88,6 +98,11 @@ namespace CSharpPrologIDE.ViewModel
 
             CodeDocument.UndoStack.ClearAll();
             CodeDocumentQuery.UndoStack.ClearAll();
+        }
+
+        ~MainViewModel()
+        {
+            CodeDocument.UndoStack.PropertyChanged -= CodeDocument_UndoStack_PropertyChanged;
         }
 
         #region ------------------ commands -----------------------
@@ -170,7 +185,14 @@ namespace CSharpPrologIDE.ViewModel
 
         private void _CmdUser_Open()
         {
-            MessageBox.Show("Open via file dialog not yet implemented, use Drag+Drop instead", "Not implemented!", MessageBoxButton.OK);
+            if (IsCurDocumentChanged)
+            {
+                MessageBox.Show("You have unsaved changes!", "Unsaved changes!", MessageBoxButton.OK);
+                return;
+            }
+            var filename = fileDialogsService.ShowOpenFileDialog(Constants.OpenSaveDialogFilter, CurFilenameDir);
+            if (filename != null)
+                LoadFile(filename);
         }
 
         private void _CmdUser_RevealInExplorer()
@@ -182,16 +204,24 @@ namespace CSharpPrologIDE.ViewModel
         {
             if (CurFilename == null)
             {
-                MessageBox.Show("Save file dialog not yet implemented. Open a file via Drag+Drop and then you can save it", "Not implemented!", MessageBoxButton.OK);
+                _CmdUser_SaveAs();
                 return;
             }
-            File.WriteAllText(CurFilename, CodeDocument.Text);
-            CodeDocument.UndoStack.MarkAsOriginalFile();
+            SaveCurFile();
         }
 
         private void _CmdUser_SaveAs()
         {
-            _CmdUser_Save();
+            var filename = fileDialogsService.ShowSaveFileDialog(Constants.OpenSaveDialogFilter, CurFilenameDir);
+            if (filename == null)
+                return;
+            CurFilename = filename;
+            SaveCurFile();
+        }
+
+        private void CodeDocument_UndoStack_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            IsCurDocumentChanged = !CodeDocument.UndoStack.IsOriginalFile;
         }
 
         #endregion
@@ -205,10 +235,17 @@ namespace CSharpPrologIDE.ViewModel
             CurFilename = filename;
             CodeDocument.Text = File.ReadAllText(filename);
             CodeDocument.UndoStack.ClearAll();
+            CodeDocument.UndoStack.MarkAsOriginalFile();
             appStateService.ModifyAndSave(appState =>
             {
                 appState.LastFilename = filename;
             });
+        }
+
+        private void SaveCurFile()
+        {
+            File.WriteAllText(CurFilename, CodeDocument.Text);
+            CodeDocument.UndoStack.MarkAsOriginalFile();
         }
 
         #endregion

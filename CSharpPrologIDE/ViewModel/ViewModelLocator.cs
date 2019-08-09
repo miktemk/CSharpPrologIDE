@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using Miktemk.Wpf.Services;
 
 namespace CSharpPrologIDE.ViewModel
 {
@@ -14,6 +15,7 @@ namespace CSharpPrologIDE.ViewModel
             // see: http://stackoverflow.com/questions/17594058/mvvm-light-there-is-already-a-factory-registered-for-inavigationservice
             if (!ViewModelBase.IsInDesignModeStatic)
             {
+                SimpleIoc.Default.Register<FileDialogsServiceWin32, FileDialogsServiceWin32>();
                 SimpleIoc.Default.Register<MyAppStateService, MyAppStateService>();
 
                 SimpleIoc.Default.Register<MainViewModel>();
