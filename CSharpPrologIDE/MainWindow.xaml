@@ -84,7 +84,7 @@
                 Document="{Binding CodeDocumentQuery}"
                 IsEnabled="True"
                 WordWrap="False"
-                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CaretPositionChangedCommand}"
+                myBehaviorsAE:AEBehaviors.OnCaretPositionChanged="{Binding CmdAvalon_CaretPositionChanged}"
                 myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlightQuery}"
                 Height="200"
                 >
