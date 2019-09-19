@@ -3,10 +3,12 @@
   <Color name="String" foreground="#0AD200" />
   <Color name="Number" foreground="#2001A4" />
   <Color name="Literal" foreground="#0399CC" />
-  <Color name="QuestionMark" foreground="#03E2E7" />
+  <Color name="FuncBuiltin" foreground="#008DD5" />
   <Color name="Variable" foreground="#DE1A00" />
   <Color name="Sign" foreground="#000000" fontWeight="bold" />
   <Color name="Sign2" foreground="#FFAD03" fontWeight="bold" />
+  <Color name="Sign3" foreground="#922B02" fontWeight="bold" />
+  <!--<Color name="Sign3" foreground="#FFFFFF" fontWeight="bold" background="#FFAD03" />-->
   <Color name="Fact" foreground="#0000FF" />
   <Color name="Subfact" foreground="#A0A0FF" />
   <Color name="FactCall" foreground="#FD5AE7" />
@@ -18,15 +20,12 @@
 
     <Rule color="Fact">^[a-zA-Z0-9_]*[a-zA-Z0-9]\b</Rule>
     <Rule color="Subfact">^[a-zA-Z0-9_]+_\b</Rule>
-    <Rule color="FactCall">^\s+[a-z][a-zA-Z0-9_]+\b</Rule>
-    <Rule color="Variable">\b[A-Z][\w\d_]+\b</Rule>
+    <!--<Rule color="FactCall">^\s+[a-z][a-zA-Z0-9_]+\b</Rule>-->
+    <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
     <Rule color="Sign">\.$</Rule>
     
     <Keywords color="Sign2">
-      <Word>:-</Word>
-      <Word>-></Word>
       <Word>?</Word>
-      <Word>_</Word>
     </Keywords>
 
     <Span color="String">
@@ -36,52 +35,148 @@
         <Span begin="\\" end="."/>
       </RuleSet>
     </Span>
+    
     <Span multiline="true">
-      <Begin>\(</Begin>
-      <End>\)</End>
+      <Begin color="Sign2">:-</Begin>
+      <End color="Sign">\.</End>
       <RuleSet>
-        <Span multiline="true">
-          <Begin >\b[a-zA-Z0-9_]+\(</Begin>
-          <End>\)</End>
-          <RuleSet>
-            <Span color="Comment" begin="%" />
-            <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
-            <Span color="String">
-              <Begin>"</Begin>
-              <End>"</End>
-              <RuleSet>
-                <Span begin="\\" end="."/>
-              </RuleSet>
-            </Span>
-            <Rule color="FactCall">\b[a-z][\w\d_]+\b</Rule>
-            <Rule color="Variable">\b[A-Z][\w\d_]+\b</Rule>
-            <Rule color="Sign">\.$</Rule>
-          </RuleSet>
-        </Span>
+        <!-- recurse start -->
         <Span color="Comment" begin="%" />
         <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
-        <Span color="String">
-          <Begin>"</Begin>
-          <End>"</End>
+        <Keywords color="Sign2">
+          <Word>-></Word>
+          <Word>is</Word>
+        </Keywords>
+        <Rule color="Sign2">\b_\b</Rule>
+        <Rule color="Sign3">;</Rule>
+        <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+        <Span color="String" begin="&quot;" end="&quot;">
           <RuleSet>
             <Span begin="\\" end="."/>
           </RuleSet>
         </Span>
-        
-        <Rule color="Number">
-          \b0[xX][0-9]+  # hex number
-          |    \b
-          (    \d+(\.[0-9]+)?   #number with optional floating point
-          |    \.[0-9]+         #or just starting with floating point
-          )
-          ([eE][+-]?[0-9]+)?  # optional exponent
-        </Rule>
-        
-        <Rule color="Literal">\b[a-z][a-zA-Z0-9_]*</Rule>
-        <Rule color="Variable">\b[A-Z][a-zA-Z0-9_]*</Rule>
-        <Rule color="QuestionMark">\?</Rule>
-
+        <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+        <Span>
+          <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+          <End color="FactCall">\)</End>
+          <RuleSet>
+            <!-- recurse here -->
+            <Span color="Comment" begin="%" />
+            <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+            <Keywords color="Sign2">
+              <Word>-></Word>
+              <Word>is</Word>
+            </Keywords>
+            <Rule color="Sign2">\b_\b</Rule>
+            <Rule color="Sign3">;</Rule>
+            <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+            <Span color="String" begin="&quot;" end="&quot;">
+              <RuleSet>
+                <Span begin="\\" end="."/>
+              </RuleSet>
+            </Span>
+            <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+            <Span>
+              <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+              <End color="FactCall">\)</End>
+              <RuleSet>
+                <!-- recurse here -->
+                <Span color="Comment" begin="%" />
+                <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+                <Keywords color="Sign2">
+                  <Word>-></Word>
+                  <Word>is</Word>
+                </Keywords>
+                <Rule color="Sign2">\b_\b</Rule>
+                <Rule color="Sign3">;</Rule>
+                <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+                <Span color="String" begin="&quot;" end="&quot;">
+                  <RuleSet>
+                    <Span begin="\\" end="."/>
+                  </RuleSet>
+                </Span>
+                <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+                <Span>
+                  <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+                  <End color="FactCall">\)</End>
+                  <RuleSet>
+                    <!-- recurse here -->
+                    <Span color="Comment" begin="%" />
+                    <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+                    <Keywords color="Sign2">
+                      <Word>-></Word>
+                      <Word>is</Word>
+                    </Keywords>
+                    <Rule color="Sign2">\b_\b</Rule>
+                    <Rule color="Sign3">;</Rule>
+                    <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+                    <Span color="String" begin="&quot;" end="&quot;">
+                      <RuleSet>
+                        <Span begin="\\" end="."/>
+                      </RuleSet>
+                    </Span>
+                    <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+                    <Span>
+                      <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+                      <End color="FactCall">\)</End>
+                      <RuleSet>
+                        <!-- recurse here -->
+                        <Span color="Comment" begin="%" />
+                        <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+                        <Keywords color="Sign2">
+                          <Word>-></Word>
+                          <Word>is</Word>
+                        </Keywords>
+                        <Rule color="Sign2">\b_\b</Rule>
+                        <Rule color="Sign3">;</Rule>
+                        <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+                        <Span color="String" begin="&quot;" end="&quot;">
+                          <RuleSet>
+                            <Span begin="\\" end="."/>
+                          </RuleSet>
+                        </Span>
+                        <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+                        <Span>
+                          <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+                          <End color="FactCall">\)</End>
+                          <RuleSet>
+                            <!-- recurse here -->
+                            <Span color="Comment" begin="%" />
+                            <Span color="Comment" multiline="true" begin="/\*" end="\*/"  />
+                            <Keywords color="Sign2">
+                              <Word>-></Word>
+                              <Word>is</Word>
+                            </Keywords>
+                            <Rule color="Sign2">\b_\b</Rule>
+                            <Rule color="Sign3">;</Rule>
+                            <Rule color="Variable">\b[A-Z][\w\d_]*\b</Rule>
+                            <Span color="String" begin="&quot;" end="&quot;">
+                              <RuleSet>
+                                <Span begin="\\" end="."/>
+                              </RuleSet>
+                            </Span>
+                            <Span color="FuncBuiltin" begin="\b(length|number|findall|sort|setof|bagof|fail|not|call|member|append|maplist|write|print)\b" end=""></Span>
+                            <Span>
+                              <Begin color="FactCall">\b[a-zA-Z0-9_]+\b\(</Begin>
+                              <End color="FactCall">\)</End>
+                              <RuleSet>
+                                <!-- recurse here -->
+                                
+                              </RuleSet>
+                            </Span>
+                          </RuleSet>
+                        </Span>
+                      </RuleSet>
+                    </Span>
+                  </RuleSet>
+                </Span>
+              </RuleSet>
+            </Span>
+          </RuleSet>
+        </Span>
+        <!-- recurse end -->
       </RuleSet>
+      
     </Span>
 
   </RuleSet>

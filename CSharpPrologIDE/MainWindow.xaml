@@ -58,7 +58,7 @@
             <avalonEdit:TextEditor
                 Padding="10"
                 FontFamily="Consolas"
-                FontSize="12pt"
+                FontSize="10pt"
                 ShowLineNumbers="True"
                 SyntaxHighlighting="{Binding SyntaxHighlighting}"
                 Document="{Binding CodeDocument}"
@@ -78,7 +78,7 @@
                 DockPanel.Dock="Bottom"
                 Padding="10"
                 FontFamily="Consolas"
-                FontSize="12pt"
+                FontSize="10pt"
                 ShowLineNumbers="True"
                 SyntaxHighlighting="{Binding SyntaxHighlighting}"
                 Document="{Binding CodeDocumentQuery}"
