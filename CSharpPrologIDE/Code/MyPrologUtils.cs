@@ -45,7 +45,7 @@ namespace CSharpPrologIDE.Code
 
         public static PrologSyntaxError TryToGetErrorFromPrologSolution(PrologEngine.ISolution sol)
         {
-            var solStr = sol.ToString(); // NOTE: msg property is not publicly accessible, by ToString() gives it away (for now)
+            var solStr = sol.ToString(); // NOTE: msg property is not publicly accessible, but ToString() gives it away (for now)
 
             // LINK: https://regex101.com/r/9acgAX/2
             var match1 = Regex.Match(solStr, @"\*\*\* (Unexpected symbol.*|error.*)");
