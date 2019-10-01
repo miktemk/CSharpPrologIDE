@@ -40,8 +40,10 @@ namespace CSharpPrologIDE.ViewModel
         public string ConsoleText { get; set; }
         public string CurFilename { get; set; }
         public bool IsCurDocumentChanged { get; private set; } = false;
+        public bool IsResultsPanelTextWrappingEnabled { get; set; }
         public string WindowTitle => $"CSharp Prolog Editor{CurFilename.PrefixIfNotEmpty(" - ")}{(IsCurDocumentChanged ? " *" : "")}";
         public string CurFilenameDir => (CurFilename != null) ? Path.GetDirectoryName(CurFilename) : null;
+        public TextWrapping ResultsPanelTextWrapping => IsResultsPanelTextWrappingEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap;
 
         // commands
         public ICommand CmdWindow_Loaded { get; }
@@ -87,7 +89,10 @@ namespace CSharpPrologIDE.ViewModel
             // .... restore from previous state
             var appState = appStateService.LoadOrCreateNew();
             if (appState.LastQueryText != null)
+            {
                 CodeDocumentQuery.Text = appState.LastQueryText;
+                IsResultsPanelTextWrappingEnabled = appState.IsResultsPanelTextWrappingEnabled;
+            }
 
             // .... load file in question
             var argFilename = (string)Application.Current.Resources[Constants.Resources.Arg1Key];
@@ -114,6 +119,7 @@ namespace CSharpPrologIDE.ViewModel
             appStateService.ModifyAndSave(appState =>
             {
                 appState.LastQueryText = CodeDocumentQuery.Text;
+                appState.IsResultsPanelTextWrappingEnabled = IsResultsPanelTextWrappingEnabled;
             });
         }
 

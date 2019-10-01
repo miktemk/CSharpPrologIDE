@@ -94,7 +94,7 @@
                 FontSize="10pt"
                 miktemkBehaviors:TextBoxBehaviors.MakeThisTextboxPrintConsoleOutput="True"
                 Text="{Binding ConsoleText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="Wrap"
+                TextWrapping="{Binding ResultsPanelTextWrapping}"
                 AcceptsReturn="True"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto">
@@ -110,7 +110,9 @@
                                 <Image Source="Resources/Images/clear-all-128.png" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <!--<Separator />-->
+                        <Separator />
+                        <MenuItem Header="Word wrap" IsCheckable="true" IsChecked="{Binding IsResultsPanelTextWrappingEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </MenuItem>
                     </ContextMenu>
                 </TextBox.ContextMenu>
             </TextBox>
