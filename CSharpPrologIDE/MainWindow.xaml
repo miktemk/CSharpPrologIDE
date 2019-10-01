@@ -30,6 +30,9 @@
         <intr:EventTrigger EventName="Closing">
             <intr:InvokeCommandAction Command="{Binding CmdWindow_Closing}"/>
         </intr:EventTrigger>
+        <intr:EventTrigger EventName="Activated">
+            <intr:InvokeCommandAction Command="{Binding CmdWindow_Activated}"/>
+        </intr:EventTrigger>
     </intr:Interaction.Triggers>
 
     <Window.InputBindings>
@@ -52,6 +55,12 @@
                     <TextBlock
                         Text="{Binding CurErrorMessage}"
                         Foreground="DarkRed"
+                    />
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock
+                        Text="{Binding CurInfoMessage}"
+                        Foreground="Black"
                     />
                 </StatusBarItem>
             </StatusBar>

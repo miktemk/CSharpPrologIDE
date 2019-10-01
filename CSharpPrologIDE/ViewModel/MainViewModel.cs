@@ -26,6 +26,8 @@ namespace CSharpPrologIDE.ViewModel
         private readonly MyAppStateService appStateService;
         private readonly FileDialogsServiceWin32 fileDialogsService;
 
+        private DateTime? curFileLoadedWhen = null;
+
         // ui config
         public UIElementDragDropConfig DragDropConfigProlog { get; } = Constants.Config.DragDropConfigProlog;
 
@@ -34,6 +36,7 @@ namespace CSharpPrologIDE.ViewModel
         public TextDocument CodeDocumentQuery { get; } = new TextDocument();
 
         public IHighlightingDefinition SyntaxHighlighting { get; set; }
+        public string CurInfoMessage { get; set; }
         public string CurErrorMessage { get; set; }
         public WordHighlight CurErrorWordHighlight { get; set; }
         public WordHighlight CurErrorWordHighlightQuery { get; set; }
@@ -48,6 +51,7 @@ namespace CSharpPrologIDE.ViewModel
         // commands
         public ICommand CmdWindow_Loaded { get; }
         public ICommand CmdWindow_Closing { get; }
+        public ICommand CmdWindow_Activated { get; }
         public ICommand CmdUser_TriggerBuild { get; }
         public ICommand CmdAvalon_CaretPositionChanged { get; }
         public ICommand CmdConsole_CopyAll { get; }
@@ -74,6 +78,7 @@ namespace CSharpPrologIDE.ViewModel
             // .... assign commands
             CmdWindow_Loaded = new RelayCommand(_CmdWindow_Loaded);
             CmdWindow_Closing = new RelayCommand(_CmdWindow_Closing);
+            CmdWindow_Activated = new RelayCommand(_CmdWindow_Activated);
             CmdUser_TriggerBuild = new RelayCommand(_CmdUser_TriggerBuild);
             CmdAvalon_CaretPositionChanged = new RelayCommand<Caret>(_CmdAvalon_CaretPositionChanged);
             CmdConsole_CopyAll = new RelayCommand(_CmdConsole_CopyAll);
@@ -84,15 +89,14 @@ namespace CSharpPrologIDE.ViewModel
             CmdUser_Save = new RelayCommand(_CmdUser_Save);
             CmdUser_SaveAs = new RelayCommand(_CmdUser_SaveAs);
 
+            this.PropertyChanged += THIS_PropertyChanged;
             CodeDocument.UndoStack.PropertyChanged += CodeDocument_UndoStack_PropertyChanged;
 
             // .... restore from previous state
             var appState = appStateService.LoadOrCreateNew();
             if (appState.LastQueryText != null)
-            {
                 CodeDocumentQuery.Text = appState.LastQueryText;
-                IsResultsPanelTextWrappingEnabled = appState.IsResultsPanelTextWrappingEnabled;
-            }
+            IsResultsPanelTextWrappingEnabled = appState.IsResultsPanelTextWrappingEnabled;
 
             // .... load file in question
             var argFilename = (string)Application.Current.Resources[Constants.Resources.Arg1Key];
@@ -113,7 +117,7 @@ namespace CSharpPrologIDE.ViewModel
         #region ------------------ commands -----------------------
 
         private void _CmdWindow_Loaded() { }
-
+        
         private void _CmdWindow_Closing()
         {
             appStateService.ModifyAndSave(appState =>
@@ -121,6 +125,19 @@ namespace CSharpPrologIDE.ViewModel
                 appState.LastQueryText = CodeDocumentQuery.Text;
                 appState.IsResultsPanelTextWrappingEnabled = IsResultsPanelTextWrappingEnabled;
             });
+        }
+
+        private void _CmdWindow_Activated()
+        {
+            if (IsCurDocumentChanged || curFileLoadedWhen == null || CurFilename == null || !File.Exists(CurFilename))
+                return;
+            var lastModified = File.GetLastWriteTime(CurFilename);
+            if (lastModified > curFileLoadedWhen)
+            {
+                // .... reload the current file
+                LoadFile(CurFilename);
+                CurInfoMessage = $"File reloaded. Last write time: {lastModified.ToString("d MMM yyyy HH:mm:ss")}";
+            }
         }
 
         private void _CmdUser_TriggerBuild()
@@ -159,6 +176,7 @@ namespace CSharpPrologIDE.ViewModel
 
         private void _CmdAvalon_CaretPositionChanged(Caret caret)
         {
+            CurInfoMessage = null;
             CurErrorMessage = null;
             CurErrorWordHighlight = null;
             CurErrorWordHighlightQuery = null;
@@ -225,6 +243,18 @@ namespace CSharpPrologIDE.ViewModel
             SaveCurFile();
         }
 
+        #endregion
+
+        #region ------------------ commands -----------------------
+
+        private void THIS_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CurErrorMessage) && CurErrorMessage != null)
+                CurInfoMessage = null;
+            if (e.PropertyName == nameof(CurInfoMessage) && CurInfoMessage != null)
+                CurErrorMessage = null;
+        }
+
         private void CodeDocument_UndoStack_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             IsCurDocumentChanged = !CodeDocument.UndoStack.IsOriginalFile;
@@ -246,6 +276,7 @@ namespace CSharpPrologIDE.ViewModel
             {
                 appState.LastFilename = filename;
             });
+            curFileLoadedWhen = DateTime.Now;
         }
 
         private void SaveCurFile()
