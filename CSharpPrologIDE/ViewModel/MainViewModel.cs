@@ -135,7 +135,7 @@ namespace CSharpPrologIDE.ViewModel
             if (lastModified > curFileLoadedWhen)
             {
                 // .... reload the current file
-                LoadFile(CurFilename);
+                LoadFile(CurFilename, clearUndoBuffer: false);
                 CurInfoMessage = $"File reloaded. Last write time: {lastModified.ToString("d MMM yyyy HH:mm:ss")}";
             }
         }
@@ -264,13 +264,14 @@ namespace CSharpPrologIDE.ViewModel
 
         #region ------------------------------------------- privates ----------------------------------------
 
-        private void LoadFile(string filename)
+        private void LoadFile(string filename, bool clearUndoBuffer = true)
         {
             if (!File.Exists(filename))
                 return;
             CurFilename = filename;
             CodeDocument.Text = File.ReadAllText(filename);
-            CodeDocument.UndoStack.ClearAll();
+            if (clearUndoBuffer)
+                CodeDocument.UndoStack.ClearAll();
             CodeDocument.UndoStack.MarkAsOriginalFile();
             appStateService.ModifyAndSave(appState =>
             {
