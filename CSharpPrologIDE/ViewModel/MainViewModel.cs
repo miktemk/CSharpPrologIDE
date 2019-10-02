@@ -44,9 +44,11 @@ namespace CSharpPrologIDE.ViewModel
         public string CurFilename { get; set; }
         public bool IsCurDocumentChanged { get; private set; } = false;
         public bool IsResultsPanelTextWrappingEnabled { get; set; }
+        public bool Config_ReplaceTabsWithSpaces { get; set; }
         public string WindowTitle => $"CSharp Prolog Editor{CurFilename.PrefixIfNotEmpty(" - ")}{(IsCurDocumentChanged ? " *" : "")}";
         public string CurFilenameDir => (CurFilename != null) ? Path.GetDirectoryName(CurFilename) : null;
         public TextWrapping ResultsPanelTextWrapping => IsResultsPanelTextWrappingEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap;
+        public int? Config_ReplaceTabsWithSpacesNSpaces => Config_ReplaceTabsWithSpaces ? 4 : (int?)null;
 
         // commands
         public ICommand CmdWindow_Loaded { get; }
@@ -97,6 +99,7 @@ namespace CSharpPrologIDE.ViewModel
             if (appState.LastQueryText != null)
                 CodeDocumentQuery.Text = appState.LastQueryText;
             IsResultsPanelTextWrappingEnabled = appState.IsResultsPanelTextWrappingEnabled;
+            Config_ReplaceTabsWithSpaces = appState.MainPanelReplaceTabsWithSpaces;
 
             // .... load file in question
             var argFilename = (string)Application.Current.Resources[Constants.Resources.Arg1Key];
@@ -124,6 +127,7 @@ namespace CSharpPrologIDE.ViewModel
             {
                 appState.LastQueryText = CodeDocumentQuery.Text;
                 appState.IsResultsPanelTextWrappingEnabled = IsResultsPanelTextWrappingEnabled;
+                appState.MainPanelReplaceTabsWithSpaces = Config_ReplaceTabsWithSpaces;
             });
         }
 

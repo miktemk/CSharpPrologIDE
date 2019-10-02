@@ -11,5 +11,6 @@ namespace CSharpPrologIDE.Code
         public string LastFilename { get; set; }
         public string LastQueryText { get; set; }
         public bool IsResultsPanelTextWrappingEnabled { get; set; }
+        public bool MainPanelReplaceTabsWithSpaces { get; set; }
     }
 }

@@ -78,7 +78,14 @@
                 myBehaviorsAE:AEBehaviors.ErrorWordHighlight="{Binding CurErrorWordHighlight}"
                 myBehaviors:GeneralBehaviors.OnDragDrop="{Binding CmdUser_OnDragDropProlog}"
                 myBehaviors:GeneralBehaviors.OnDragDropConfig="{Binding DragDropConfigProlog}"
+                myBehaviorsAE:AEBehaviors.AvalonTabsToSpaces="{Binding Config_ReplaceTabsWithSpacesNSpaces}"
                 >
+                <avalonEdit:TextEditor.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Replace tabs with spaces" IsCheckable="true" IsChecked="{Binding Config_ReplaceTabsWithSpaces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </MenuItem>
+                    </ContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
             </avalonEdit:TextEditor>
         </DockPanel>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
